@@ -10,17 +10,6 @@
 #pragma once
 #include "guard.h"
 
-std::shared_mutex MutexID_Guard;
-/// <summary>
-/// maps MutexID to counter
-/// </summary>
-thread_local std::map<short, short> MutexID_Map; 
-/// <summary>
-/// maps MutexID to Mode it was originally taken in Unique = true, Shared = false
-/// used to decide how to unlock object based on how it was locked
-/// </summary>
-thread_local std::map<short, bool> MutexMode_Map;
-
 bool recursive_shared_prioritized_mutex::CheckLocksOrder()
 {
     MutexID_Guard.lock();
