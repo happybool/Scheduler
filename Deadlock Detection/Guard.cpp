@@ -10,7 +10,11 @@
 #pragma once
 #include "guard.h"
 
+<<<<<<< HEAD
 bool cascade_mutex::CheckLocksOrder()
+=======
+bool recursive_shared_prioritized_mutex::CheckLocksOrder()
+>>>>>>> 9f0812714ce487898be5eaff9b7d795f7ab36b57
 {
     MutexID_Guard.lock();
     bool result = true;

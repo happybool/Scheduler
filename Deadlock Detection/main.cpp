@@ -3,9 +3,9 @@
 #include "job.h"
 #include "guard.h"
 
-recursive_shared_prioritized_mutex l1(1);
-recursive_shared_prioritized_mutex l2(2);
-recursive_shared_prioritized_mutex l3(3);
+cascade_mutex l1(1);
+cascade_mutex l2(2);
+cascade_mutex l3(3);
 
 class SimulatedDeadlock
 {
