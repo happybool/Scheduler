@@ -62,10 +62,10 @@ public:
         SharedLeaf 
     };
 private:
-    recursive_shared_prioritized_mutex* _mut = 0;
+    cascade_mutex* _mut = 0;
     mode _mod = Unique;
 public:
-    ScopedLock(recursive_shared_prioritized_mutex& mutex, mode mod)
+    ScopedLock(cascade_mutex& mutex, mode mod)
     {
         _mod = mod;
         _mut = &mutex;
