@@ -9,7 +9,7 @@
 #include "Job.h"
 #include <chrono>
 
-recursive_shared_prioritized_mutex l0(0);
+cascade_mutex l0(0);
 
 bool Scheduler::ScheduleJob(iJob* job)
 {

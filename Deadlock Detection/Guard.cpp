@@ -10,18 +10,7 @@
 #pragma once
 #include "guard.h"
 
-std::shared_mutex MutexID_Guard;
-/// <summary>
-/// maps MutexID to counter
-/// </summary>
-thread_local std::map<short, short> MutexID_Map; 
-/// <summary>
-/// maps MutexID to Mode it was originally taken in Unique = true, Shared = false
-/// used to decide how to unlock object based on how it was locked
-/// </summary>
-thread_local std::map<short, bool> MutexMode_Map;
-
-bool recursive_shared_prioritized_mutex::CheckLocksOrder()
+bool cascade_mutex::CheckLocksOrder()
 {
     MutexID_Guard.lock();
     bool result = true;
@@ -34,12 +23,12 @@ bool recursive_shared_prioritized_mutex::CheckLocksOrder()
     return result;
 }
 
-recursive_shared_prioritized_mutex::recursive_shared_prioritized_mutex(short UniqueID) :std::shared_mutex()
+cascade_mutex::cascade_mutex(short UniqueID) :std::shared_mutex()
 {
     MutexID = UniqueID;
 }
 
-void recursive_shared_prioritized_mutex::lock_unique()
+void cascade_mutex::lock_unique()
 {
     size_t this_id = std::hash<std::thread::id>{}(std::this_thread::get_id());
     bool orderPreserved = CheckLocksOrder();
@@ -70,7 +59,7 @@ void recursive_shared_prioritized_mutex::lock_unique()
     }
 }
 
-void recursive_shared_prioritized_mutex::lock_shared()
+void cascade_mutex::lock_shared()
 {
     size_t this_id = std::hash<std::thread::id>{}(std::this_thread::get_id());
     bool orderPreserved = CheckLocksOrder();
@@ -98,7 +87,7 @@ void recursive_shared_prioritized_mutex::lock_shared()
     }
 }
 
-void recursive_shared_prioritized_mutex::unlock()
+void cascade_mutex::unlock()
 {
     size_t this_id = std::hash<std::thread::id>{}(std::this_thread::get_id());
     if (owner == this_id)// Lock belongs to current thread

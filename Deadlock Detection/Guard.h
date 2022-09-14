@@ -20,9 +20,18 @@
 /// <summary>
 /// Must be defined within class with Job function where it is suppose to be used as member variables
 /// </summary>
-class recursive_shared_prioritized_mutex : public std::shared_mutex
+class cascade_mutex : public std::shared_mutex
 {
-private:
+    inline static std::shared_mutex MutexID_Guard;
+    /// <summary>
+    /// maps MutexID to counter
+    /// </summary>
+    inline static thread_local std::map<short, short> MutexID_Map;
+    /// <summary>
+    /// maps MutexID to Mode it was originally taken in Unique = true, Shared = false
+    /// used to decide how to unlock object based on how it was locked
+    /// </summary>
+    inline static thread_local std::map<short, bool> MutexMode_Map;
     std::atomic<size_t> owner;
     short MutexID = 0;
     bool CheckLocksOrder();
@@ -32,7 +41,7 @@ private:
     _NODISCARD bool try_lock(){}
     void unlock_shared() {}
 public:
-    recursive_shared_prioritized_mutex(short UniqueID);
+    cascade_mutex(short UniqueID);
     void lock_unique();
     void unlock();
     void lock_shared();
