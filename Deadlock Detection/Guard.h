@@ -22,12 +22,6 @@
 /// </summary>
 class cascade_mutex : public std::shared_mutex
 {
-<<<<<<< HEAD
-=======
-    
-
-
->>>>>>> 9f0812714ce487898be5eaff9b7d795f7ab36b57
     inline static std::shared_mutex MutexID_Guard;
     /// <summary>
     /// maps MutexID to counter

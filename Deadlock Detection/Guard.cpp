@@ -10,20 +10,14 @@
 #pragma once
 #include "guard.h"
 
-<<<<<<< HEAD
 bool cascade_mutex::CheckLocksOrder()
-=======
-bool recursive_shared_prioritized_mutex::CheckLocksOrder()
->>>>>>> 9f0812714ce487898be5eaff9b7d795f7ab36b57
 {
-    MutexID_Guard.lock();
     bool result = true;
     for (auto item : MutexID_Map)
     {
         if (item.first > MutexID)
             result = false;
     }
-    MutexID_Guard.unlock();
     return result;
 }
 
@@ -69,7 +63,6 @@ void cascade_mutex::lock_shared()
     bool orderPreserved = CheckLocksOrder();
     if (orderPreserved)
     {
-        MutexID_Guard.lock();
         if (owner == this_id)// Lock belongs to current thread
         {
             MutexID_Map[MutexID]++;//Lock is retaken, just increase counter
