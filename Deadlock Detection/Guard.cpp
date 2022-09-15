@@ -29,12 +29,15 @@ cascade_mutex::cascade_mutex(short UniqueID) :std::shared_mutex()
 void cascade_mutex::lock_unique()
 {
     size_t this_id = std::hash<std::thread::id>{}(std::this_thread::get_id());
+    MutexID_Guard.lock();
     bool orderPreserved = CheckLocksOrder();
     if (orderPreserved)
     {
-        MutexID_Guard.lock();
-        if (MutexMode_Map.count(MutexID)>0 && !MutexMode_Map[MutexID])
+        if (MutexMode_Map.count(MutexID) > 0 && !MutexMode_Map[MutexID])
+        {
+            MutexID_Guard.unlock();
             throw "Attempt to lock get writing lock at time of reading on the same thread";
+        }
         if (owner == this_id)// Lock belongs to current thread
         {
             MutexID_Map[MutexID]++;//Lock is retaken, just increase counter
@@ -53,6 +56,7 @@ void cascade_mutex::lock_unique()
     }
     else
     {
+        MutexID_Guard.unlock();
         throw "Attempt to take a lock outside of order, potential deadlock";
     }
 }
@@ -60,6 +64,7 @@ void cascade_mutex::lock_unique()
 void cascade_mutex::lock_shared()
 {
     size_t this_id = std::hash<std::thread::id>{}(std::this_thread::get_id());
+    MutexID_Guard.lock();
     bool orderPreserved = CheckLocksOrder();
     if (orderPreserved)
     {
@@ -80,6 +85,7 @@ void cascade_mutex::lock_shared()
     }
     else
     {
+        MutexID_Guard.unlock();
         throw "Attempt to take a lock outside of order, potential deadlock";
     }
 }
